@@ -18,3 +18,7 @@ def update_legend(session: Session, legend: Legend) -> Legend:
     session.commit()
     session.refresh(legend)
     return legend
+
+def delete_legend(session: Session, legend: Legend) -> None:
+    session.delete(legend)
+    session.commit()

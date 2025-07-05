@@ -82,3 +82,11 @@ def update_legend(
         legend.image_url = image_url
 
     return legend_repository.update_legend(session, legend)
+
+def delete_legend(session: Session, legend_id: UUID):
+    legend = legend_repository.get_legend_by_id(session, legend_id)
+    if not legend:
+        raise HTTPException(status_code=404, detail="Legend not found")
+
+    legend_repository.delete_legend(session, legend)
+    return {"message": "Legend deleted successfully"}

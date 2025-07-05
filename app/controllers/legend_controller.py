@@ -1,11 +1,11 @@
-from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
+from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status
+from fastapi.responses import JSONResponse
 from sqlmodel import Session
 from app.core.database import get_session
 from app.services import legend_service
 from app.schemas.legend_schema import LegendCreate, LegendResponse, LegendUpdate
 from datetime import date
 from uuid import UUID
-import cloudinary.uploader
 from typing import List, Optional
 from app.core.cloudinary_config import cloudinary
 from app.models.user_model import User
@@ -87,3 +87,14 @@ def update_legend(
         location_id=location_id,
         image=image
     )
+    
+
+@router.delete("/{legend_id}", status_code=status.HTTP_204_NO_CONTENT)
+def delete_legend(
+    legend_id: UUID,
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    result = legend_service.delete_legend(session, legend_id)
+    return JSONResponse(status_code=200, content=result)
+    
