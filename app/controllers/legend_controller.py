@@ -2,7 +2,7 @@ from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
 from sqlmodel import Session
 from app.core.database import get_session
 from app.services import legend_service
-from app.schemas.legend_schema import LegendCreate, LegendResponse
+from app.schemas.legend_schema import LegendCreate, LegendResponse, LegendUpdate
 from datetime import date
 from uuid import UUID
 import cloudinary.uploader
@@ -57,8 +57,33 @@ def get_legends(
     )
 
 @router.get("/{legend_id}", response_model=LegendResponse)
-def get_legend_by_id(legend_id: str, session: Session = Depends(get_session)):
+def get_legend_by_id(legend_id: UUID, session: Session = Depends(get_session)):
     legend = legend_service.fetch_legend_by_id(session, legend_id)
     if not legend:
         raise HTTPException(status_code=404, detail="Legend not found")
     return legend
+
+
+
+@router.put("/{legend_id}", response_model=LegendResponse)
+def update_legend(
+    legend_id: UUID,
+    name: Optional[str] = Form(None),
+    description: Optional[str] = Form(None),
+    legend_date: Optional[date] = Form(None),
+    category_id: Optional[UUID] = Form(None),
+    location_id: Optional[UUID] = Form(None),
+    image: Optional[UploadFile] = File(None),
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user),
+):
+    return legend_service.update_legend(
+        session=session,
+        legend_id=legend_id,
+        name=name,
+        description=description,
+        legend_date=legend_date,
+        category_id=category_id,
+        location_id=location_id,
+        image=image
+    )

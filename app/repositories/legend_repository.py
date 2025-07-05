@@ -8,7 +8,13 @@ def create_legend(session: Session, legend: Legend) -> Legend:
     session.refresh(legend)
     return legend
 
-def get_legend_by_id(session: Session, legend_id: str) -> Legend | None:
+def get_legend_by_id(session: Session, legend_id: UUID) -> Legend | None:
     return session.exec(
-        select(Legend).where(Legend.id == UUID(legend_id))
+        select(Legend).where(Legend.id == legend_id)
     ).first()
+    
+def update_legend(session: Session, legend: Legend) -> Legend:
+    session.add(legend)
+    session.commit()
+    session.refresh(legend)
+    return legend

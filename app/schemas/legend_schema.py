@@ -86,3 +86,14 @@ class LegendResponse(LegendBase):
 
     class Config:
         from_attributes = True
+
+
+class LegendUpdate(BaseModel):
+    name: Optional[str]
+    description: Optional[str]
+    legend_date: Optional[date]
+    category_id: Optional[UUID]
+    location_id: Optional[UUID]
+
+    class Config:
+        from_attributes = True
