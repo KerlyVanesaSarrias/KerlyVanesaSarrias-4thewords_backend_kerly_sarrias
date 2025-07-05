@@ -4,6 +4,7 @@ from app.controllers.hello_controller import router as hello_router
 from app.controllers.user_controller import router as auth_router
 from app.controllers.legend_controller import router as legend_router
 from app.controllers.category_controller import router as category_router
+from app.controllers.location_controller import router as location_router
 
 app = FastAPI()
 init_db()
@@ -16,3 +17,4 @@ app.include_router(hello_router)
 app.include_router(auth_router)
 app.include_router(legend_router)
 app.include_router(category_router)
+app.include_router(location_router)
