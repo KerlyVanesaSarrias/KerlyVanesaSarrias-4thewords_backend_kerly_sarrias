@@ -47,3 +47,5 @@ def get_legends(
 
     return session.exec(query).all()
 
+def fetch_legend_by_id(session: Session, legend_id: str):
+    return legend_repository.get_legend_by_id(session, legend_id)

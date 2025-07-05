@@ -55,3 +55,10 @@ def get_legends(
     return legend_service.get_legends(
         session, name, category_id, province_id, canton_id, district_id
     )
+
+@router.get("/{legend_id}", response_model=LegendResponse)
+def get_legend_by_id(legend_id: str, session: Session = Depends(get_session)):
+    legend = legend_service.fetch_legend_by_id(session, legend_id)
+    if not legend:
+        raise HTTPException(status_code=404, detail="Legend not found")
+    return legend
