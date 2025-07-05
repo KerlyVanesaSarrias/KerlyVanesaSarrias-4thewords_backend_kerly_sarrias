@@ -1,0 +1,42 @@
+from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
+from sqlmodel import Session
+from app.core.database import get_session
+from app.services.legend_service import create_legend
+from app.schemas.legend_schema import LegendCreate, LegendResponse
+from datetime import date
+from uuid import UUID
+import cloudinary.uploader
+from app.core.cloudinary_config import cloudinary
+from app.models.user_model import User
+from app.utils.auth_utils import get_current_user
+
+router = APIRouter(prefix="/legends", tags=["Legends"])
+
+@router.post("/", response_model=LegendResponse)
+async def create_legend_endpoint(
+    name: str = Form(...),
+    description: str = Form(...),
+    legend_date: date = Form(...),
+    category_id: UUID = Form(...),
+    location_id: UUID = Form(...),
+    image: UploadFile = File(...),
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    try:
+        result = cloudinary.uploader.upload(image.file, folder="leyendas")
+        image_url = result["secure_url"]
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error al subir imagen: " + str(e))
+
+    legend_data = {
+        "name": name,
+        "description": description,
+        "legend_date": legend_date,
+        "category_id": category_id,
+        "location_id": location_id,
+        "image_url": image_url,
+    }
+
+    legend = create_legend(session, data=LegendCreate(**legend_data))
+    return legend
