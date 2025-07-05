@@ -1,11 +1,12 @@
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException
 from sqlmodel import Session
 from app.core.database import get_session
-from app.services.legend_service import create_legend
+from app.services import legend_service
 from app.schemas.legend_schema import LegendCreate, LegendResponse
 from datetime import date
 from uuid import UUID
 import cloudinary.uploader
+from typing import List, Optional
 from app.core.cloudinary_config import cloudinary
 from app.models.user_model import User
 from app.utils.auth_utils import get_current_user
@@ -38,5 +39,19 @@ async def create_legend_endpoint(
         "image_url": image_url,
     }
 
-    legend = create_legend(session, data=LegendCreate(**legend_data))
+    legend = legend_service.create_legend(session, data=LegendCreate(**legend_data))
     return legend
+
+@router.get("/", response_model=List[LegendResponse])
+def get_legends(
+    session: Session = Depends(get_session),
+    name: Optional[str] = None,
+    category_id: Optional[UUID] = None,
+    province_id: Optional[UUID] = None,
+    canton_id: Optional[UUID] = None,
+    district_id: Optional[UUID] = None,
+    current_user: User = Depends(get_current_user)
+):
+    return legend_service.get_legends(
+        session, name, category_id, province_id, canton_id, district_id
+    )
