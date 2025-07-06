@@ -8,5 +8,14 @@ def get_session():
         yield session
 
 def init_db():
-    from app.models import user_model
+    from app.models import (
+        user_model,
+        category_model,
+        province_model,
+        canton_model,
+        district_model,
+        location_model,
+        legend_model
+    )
     SQLModel.metadata.create_all(engine)
+
