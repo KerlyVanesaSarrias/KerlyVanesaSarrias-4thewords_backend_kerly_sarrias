@@ -4,14 +4,12 @@ from typing import Optional
 from fastapi import HTTPException, UploadFile
 from sqlmodel import Session
 from app.models.legend_model import Legend
-from app.schemas.legend_schema import LegendCreate, LegendUpdate
+from app.schemas.legend_schema import LegendCreate, LegendResponse, LegendUpdate
 from app.repositories import legend_repository
 from uuid import UUID, uuid4
 from typing import Optional, List
 from sqlmodel import Session, select
 from app.models.legend_model import Legend
-from app.models.location_model import Location
-from sqlalchemy import cast, String
 from app.core.cloudinary_config import upload_image
 
 def create_legend(session: Session, data: LegendCreate) -> Legend:
@@ -34,20 +32,16 @@ def get_legends(
     canton_id: Optional[UUID],
     district_id: Optional[UUID],
 ):
-    query = select(Legend)
-
-    if name:
-        query = select(Legend).where(cast(Legend.name, String).ilike(f"%{name}%"))
-    if category_id:
-        query = query.where(Legend.category_id == category_id)
-    if province_id:
-        query = query.join(Location).where(Location.province_id == province_id)
-    if canton_id:
-        query = query.join(Location).where(Location.canton_id == canton_id)
-    if district_id:
-        query = query.join(Location).where(Location.district_id == district_id)
-
-    return session.exec(query).all()
+    legends = legend_repository.get_all_legends(
+        session,
+        name=name,
+        category_id=category_id,
+        province_id=province_id,
+        canton_id=canton_id,
+        district_id=district_id
+    )
+    
+    return legends
 
 def fetch_legend_by_id(session: Session, legend_id: UUID):
     return legend_repository.get_legend_by_id(session, legend_id)

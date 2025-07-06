@@ -1,7 +1,8 @@
 from fastapi import APIRouter, Depends, UploadFile, File, Form, HTTPException, status
 from fastapi.responses import JSONResponse
-from sqlmodel import Session
+from sqlmodel import Session, select
 from app.core.database import get_session
+from app.models.legend_model import Legend
 from app.services import legend_service
 from app.schemas.legend_schema import LegendCreate, LegendResponse, LegendUpdate
 from datetime import date
