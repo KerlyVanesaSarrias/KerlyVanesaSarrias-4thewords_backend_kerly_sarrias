@@ -1,12 +1,9 @@
-from uuid import UUID
 from fastapi import APIRouter, Depends, Query
 from sqlmodel import Session
 from app.core.database import get_session
 from app.models.user_model import User
-from app.repositories.location_repository import (
-    get_all_provinces, get_cantons_by_province, get_districts_by_canton
-)
-from app.schemas.location_schema import ProvinceResponse, CantonResponse, DistrictResponse
+from app.repositories import location_repository
+from app.schemas.location_schema import CantonCreate, DistrictCreate, LocationResponse, ProvinceCreate, ProvinceResponse, CantonResponse, DistrictResponse
 from app.utils.auth_utils import get_current_user
 
 router = APIRouter(prefix="/locations", tags=["Locations"])
@@ -16,20 +13,63 @@ def list_provinces(
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
     ):
-    return get_all_provinces(session)
+    return location_repository.get_all_provinces(session)
 
-@router.get("/cantons", response_model=list[CantonResponse])
-def list_cantons(
-    province_id: UUID = Query(...), 
+@router.get("/provinces/{province_id}/cantons", response_model=list[CantonResponse])
+def list_cantons_by_province(
+    province_id: str, 
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
-    return get_cantons_by_province(session, province_id)
+    return location_repository.get_cantons_by_province(session, province_id)
+
+@router.get("/canton/{canton_id}/districts", response_model=list[DistrictResponse])
+def list_districts_by_canton(
+    canton_id: str, 
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    return location_repository.get_districts_by_canton(session, canton_id)
 
 @router.get("/districts", response_model=list[DistrictResponse])
 def list_districts(
-    canton_id: UUID = Query(...), 
+    canton_id: str = Query(...), 
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
 ):
-    return get_districts_by_canton(session, canton_id)
+    return location_repository.get_districts_by_canton(session, canton_id)
+
+@router.post("/province", response_model=ProvinceResponse)
+def create_province(
+    province: ProvinceCreate, 
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    provinceCreated = location_repository.create_province(session, province.name)
+    return provinceCreated
+
+@router.post("/canton", response_model=CantonResponse)
+def create_canton(
+    canton: CantonCreate, 
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    cantonCreated = location_repository.create_canton(session, canton.name, canton.province_id)
+    return cantonCreated
+
+@router.post("/district", response_model=DistrictResponse)
+def create_district(
+    district: DistrictCreate, 
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    districtCreated = location_repository.create_district(session, district.name, district.canton_id)
+    return districtCreated
+
+@router.get("/{location_id}", response_model=LocationResponse)
+def get_location(
+    location_id: str, 
+    session: Session = Depends(get_session),
+    current_user: User = Depends(get_current_user)
+):
+    return location_repository.get_location_by_id(session, location_id)

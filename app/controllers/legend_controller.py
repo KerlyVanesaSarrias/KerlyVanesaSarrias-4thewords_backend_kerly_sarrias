@@ -6,7 +6,6 @@ from app.models.legend_model import Legend
 from app.services import legend_service
 from app.schemas.legend_schema import LegendCreate, LegendResponse, LegendUpdate
 from datetime import date
-from uuid import UUID
 from typing import List, Optional
 from app.core.cloudinary_config import cloudinary
 from app.models.user_model import User
@@ -19,8 +18,8 @@ async def create_legend_endpoint(
     name: str = Form(...),
     description: str = Form(...),
     legend_date: date = Form(...),
-    category_id: UUID = Form(...),
-    location_id: UUID = Form(...),
+    category_id: str = Form(...),
+    location_id: str = Form(...),
     image: UploadFile = File(...),
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
@@ -47,10 +46,10 @@ async def create_legend_endpoint(
 def get_legends(
     session: Session = Depends(get_session),
     name: Optional[str] = None,
-    category_id: Optional[UUID] = None,
-    province_id: Optional[UUID] = None,
-    canton_id: Optional[UUID] = None,
-    district_id: Optional[UUID] = None,
+    category_id: Optional[str] = None,
+    province_id: Optional[str] = None,
+    canton_id: Optional[str] = None,
+    district_id: Optional[str] = None,
     current_user: User = Depends(get_current_user)
 ):
     return legend_service.get_legends(
@@ -58,7 +57,7 @@ def get_legends(
     )
 
 @router.get("/{legend_id}", response_model=LegendResponse)
-def get_legend_by_id(legend_id: UUID, session: Session = Depends(get_session)):
+def get_legend_by_id(legend_id: str, session: Session = Depends(get_session)):
     legend = legend_service.fetch_legend_by_id(session, legend_id)
     if not legend:
         raise HTTPException(status_code=404, detail="Legend not found")
@@ -68,12 +67,12 @@ def get_legend_by_id(legend_id: UUID, session: Session = Depends(get_session)):
 
 @router.put("/{legend_id}", response_model=LegendResponse)
 def update_legend(
-    legend_id: UUID,
+    legend_id: str,
     name: Optional[str] = Form(None),
     description: Optional[str] = Form(None),
     legend_date: Optional[date] = Form(None),
-    category_id: Optional[UUID] = Form(None),
-    location_id: Optional[UUID] = Form(None),
+    category_id: Optional[str] = Form(None),
+    location_id: Optional[str] = Form(None),
     image: Optional[UploadFile] = File(None),
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user),
@@ -92,7 +91,7 @@ def update_legend(
 
 @router.delete("/{legend_id}", status_code=status.HTTP_204_NO_CONTENT)
 def delete_legend(
-    legend_id: UUID,
+    legend_id: str,
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user),
 ):

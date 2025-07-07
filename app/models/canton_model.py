@@ -1,7 +1,7 @@
 from sqlmodel import SQLModel, Field
-from uuid import UUID, uuid4
+from uuid import uuid4
 
 class Canton(SQLModel, table=True):
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)
     name: str
-    province_id: UUID = Field(foreign_key="province.id")
+    province_id: str = Field(foreign_key="province.id")

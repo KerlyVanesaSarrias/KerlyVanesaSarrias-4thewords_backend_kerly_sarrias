@@ -1,5 +1,4 @@
 from typing import Optional
-from uuid import UUID
 from sqlalchemy import String, cast
 from sqlmodel import Session, select
 from app.models.legend_model import Legend
@@ -12,7 +11,7 @@ def create_legend(session: Session, legend: Legend) -> Legend:
     session.refresh(legend)
     return legend
 
-def get_legend_by_id(session: Session, legend_id: UUID) -> Legend | None:
+def get_legend_by_id(session: Session, legend_id: str) -> Legend | None:
     return session.exec(
         select(Legend).where(Legend.id == legend_id)
     ).first()
@@ -29,10 +28,10 @@ def delete_legend(session: Session, legend: Legend) -> None:
     
 def get_all_legends(session: Session, 
     name: Optional[str],
-    category_id: Optional[UUID],
-    province_id: Optional[UUID],
-    canton_id: Optional[UUID],
-    district_id: Optional[UUID]
+    category_id: Optional[str],
+    province_id: Optional[str],
+    canton_id: Optional[str],
+    district_id: Optional[str]
 ):
     
     query = select(Legend).options(

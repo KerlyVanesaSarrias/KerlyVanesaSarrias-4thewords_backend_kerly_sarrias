@@ -6,7 +6,6 @@ from sqlmodel import Session
 from app.models.legend_model import Legend
 from app.schemas.legend_schema import LegendCreate, LegendResponse, LegendUpdate
 from app.repositories import legend_repository
-from uuid import UUID, uuid4
 from typing import Optional, List
 from sqlmodel import Session, select
 from app.models.legend_model import Legend
@@ -14,7 +13,6 @@ from app.core.cloudinary_config import upload_image
 
 def create_legend(session: Session, data: LegendCreate) -> Legend:
     legend = Legend(
-        id=uuid4(),
         name=data.name,
         description=data.description,
         legend_date=data.legend_date,
@@ -27,10 +25,10 @@ def create_legend(session: Session, data: LegendCreate) -> Legend:
 def get_legends(
     session: Session,
     name: Optional[str],
-    category_id: Optional[UUID],
-    province_id: Optional[UUID],
-    canton_id: Optional[UUID],
-    district_id: Optional[UUID],
+    category_id: Optional[str],
+    province_id: Optional[str],
+    canton_id: Optional[str],
+    district_id: Optional[str],
 ):
     legends = legend_repository.get_all_legends(
         session,
@@ -43,18 +41,18 @@ def get_legends(
     
     return legends
 
-def fetch_legend_by_id(session: Session, legend_id: UUID):
+def fetch_legend_by_id(session: Session, legend_id: str):
     return legend_repository.get_legend_by_id(session, legend_id)
 
 
 def update_legend(
     session: Session,
-    legend_id:  UUID,
+    legend_id:  str,
     name: Optional[str],
     description: Optional[str],
     legend_date: Optional[date],
-    category_id: Optional[UUID],
-    location_id: Optional[UUID],
+    category_id: Optional[str],
+    location_id: Optional[str],
     image: Optional[UploadFile],
 ):
     legend = legend_repository.get_legend_by_id(session, legend_id)
@@ -77,7 +75,7 @@ def update_legend(
 
     return legend_repository.update_legend(session, legend)
 
-def delete_legend(session: Session, legend_id: UUID):
+def delete_legend(session: Session, legend_id: str):
     legend = legend_repository.get_legend_by_id(session, legend_id)
     if not legend:
         raise HTTPException(status_code=404, detail="Legend not found")
