@@ -19,7 +19,7 @@ Backend developed using **FastAPI** to manage popular Costa Rican legends. It su
 
 
 ## DB installation
-Mysql must be installed and the schema.sql must be imported
+Mysql must be installed and the 4thewords_db_kerly_sarrias.sql must be imported
 
 ## installation
 
