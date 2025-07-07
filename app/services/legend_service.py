@@ -40,7 +40,7 @@ def get_legends(
         canton_id=canton_id,
         district_id=district_id
     )
-    
+    print(f"Legends fetched: {legends}")
     return legends
 
 def fetch_legend_by_id(session: Session, legend_id: str):

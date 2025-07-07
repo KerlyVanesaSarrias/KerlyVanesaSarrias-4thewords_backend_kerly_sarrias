@@ -37,6 +37,9 @@ def get_all_legends(session: Session,
     
     query = select(Legend).options(
             selectinload(Legend.category), # type: ignore
+            selectinload(Legend.province), # type: ignore
+            selectinload(Legend.canton), # type: ignore
+            selectinload(Legend.district), # type: ignore
         )
 
     if name:

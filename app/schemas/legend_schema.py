@@ -2,6 +2,8 @@ from pydantic import BaseModel
 from typing import Optional
 from datetime import date
 
+from app.models.category_model import Category
+
 class CategoryBase(BaseModel):
     name: str
 
@@ -73,20 +75,23 @@ class LegendBase(BaseModel):
     name: str
     description: str
     legend_date: date
+    image_url: Optional[str] = None
+
+class LegendCreate(LegendBase):
     category_id: str
     province_id: str
     canton_id: str
     district_id: str
-    image_url: Optional[str] = None
-
-class LegendCreate(LegendBase):
-    pass
 
 class LegendResponse(LegendBase):
     id: str
+    category: CategoryResponse
+    province: ProvinceResponse
+    canton: CantonResponse
+    district: DistrictResponse
 
     class Config:
-        from_attributes = True
+        orm_mode = True
 
 
 class LegendUpdate(BaseModel):
