@@ -54,10 +54,12 @@ def get_legends(
     province_id: Optional[str] = None,
     canton_id: Optional[str] = None,
     district_id: Optional[str] = None,
+    legend_date: Optional[date] = None,
     current_user: User = Depends(get_current_user)
+    
 ):
     return legend_service.get_legends(
-        session, name, category_id, province_id, canton_id, district_id
+        session, name, category_id, province_id, canton_id, district_id, legend_date
     )
 
 @router.get("/{legend_id}", response_model=LegendResponse)

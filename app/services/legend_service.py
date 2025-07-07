@@ -31,6 +31,7 @@ def get_legends(
     province_id: Optional[str],
     canton_id: Optional[str],
     district_id: Optional[str],
+    legend_date: Optional[date] = None,
 ):
     legends = legend_repository.get_all_legends(
         session,
