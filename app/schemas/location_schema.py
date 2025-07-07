@@ -1,35 +1,43 @@
 from pydantic import BaseModel
-from uuid import UUID
 
+class ProvinceCreate(BaseModel):
+    name: str
 
 class ProvinceResponse(BaseModel):
-    id: UUID
+    id: str
     name: str
 
     class Config:
         from_attributes = True
 
+class CantonCreate(BaseModel):
+    name: str
+    province_id: str
 class CantonResponse(BaseModel):
-    id: UUID
+    id: str
     name: str
-    province_id: UUID
+    province_id: str
 
     class Config:
         from_attributes = True
+
+class DistrictCreate(BaseModel):
+    name: str
+    canton_id: str
 
 class DistrictResponse(BaseModel):
-    id: UUID
+    id: str
     name: str
-    canton_id: UUID
+    canton_id: str
 
     class Config:
         from_attributes = True
 
 class LocationResponse(BaseModel):
-    id: UUID
-    province_id: UUID
-    canton_id: UUID
-    district_id: UUID
+    id: str
+    province_id: str
+    canton_id: str
+    district_id: str
 
     class Config:
         from_attributes = True

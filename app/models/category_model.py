@@ -1,6 +1,6 @@
-from sqlmodel import SQLModel, Field
-from uuid import UUID, uuid4
-
+from typing import TYPE_CHECKING
+from sqlmodel import Relationship, SQLModel, Field
+from uuid import uuid4
 class Category(SQLModel, table=True):
-    id: UUID = Field(default_factory=uuid4, primary_key=True)
+    id: str = Field(default_factory=lambda: str(uuid4()), primary_key=True)
     name: str

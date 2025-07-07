@@ -4,63 +4,58 @@ from typing import Optional
 from fastapi import HTTPException, UploadFile
 from sqlmodel import Session
 from app.models.legend_model import Legend
-from app.schemas.legend_schema import LegendCreate, LegendUpdate
+from app.schemas.legend_schema import LegendCreate, LegendResponse, LegendUpdate
 from app.repositories import legend_repository
-from uuid import UUID, uuid4
 from typing import Optional, List
 from sqlmodel import Session, select
 from app.models.legend_model import Legend
-from app.models.location_model import Location
-from sqlalchemy import cast, String
 from app.core.cloudinary_config import upload_image
 
 def create_legend(session: Session, data: LegendCreate) -> Legend:
     legend = Legend(
-        id=uuid4(),
         name=data.name,
         description=data.description,
         legend_date=data.legend_date,
         image_url=data.image_url,
         category_id=data.category_id,
-        location_id=data.location_id,
+        province_id=data.province_id,
+        canton_id=data.canton_id,
+        district_id=data.district_id
     )
     return legend_repository.create_legend(session, legend)
 
 def get_legends(
     session: Session,
     name: Optional[str],
-    category_id: Optional[UUID],
-    province_id: Optional[UUID],
-    canton_id: Optional[UUID],
-    district_id: Optional[UUID],
+    category_id: Optional[str],
+    province_id: Optional[str],
+    canton_id: Optional[str],
+    district_id: Optional[str],
+    legend_date: Optional[date] = None,
 ):
-    query = select(Legend)
+    legends = legend_repository.get_all_legends(
+        session,
+        name=name,
+        category_id=category_id,
+        province_id=province_id,
+        canton_id=canton_id,
+        district_id=district_id
+    )
+    print(f"Legends fetched: {legends}")
+    return legends
 
-    if name:
-        query = select(Legend).where(cast(Legend.name, String).ilike(f"%{name}%"))
-    if category_id:
-        query = query.where(Legend.category_id == category_id)
-    if province_id:
-        query = query.join(Location).where(Location.province_id == province_id)
-    if canton_id:
-        query = query.join(Location).where(Location.canton_id == canton_id)
-    if district_id:
-        query = query.join(Location).where(Location.district_id == district_id)
-
-    return session.exec(query).all()
-
-def fetch_legend_by_id(session: Session, legend_id: UUID):
+def fetch_legend_by_id(session: Session, legend_id: str):
     return legend_repository.get_legend_by_id(session, legend_id)
 
 
 def update_legend(
     session: Session,
-    legend_id:  UUID,
+    legend_id:  str,
     name: Optional[str],
     description: Optional[str],
     legend_date: Optional[date],
-    category_id: Optional[UUID],
-    location_id: Optional[UUID],
+    category_id: Optional[str],
+    location_id: Optional[str],
     image: Optional[UploadFile],
 ):
     legend = legend_repository.get_legend_by_id(session, legend_id)
@@ -83,7 +78,7 @@ def update_legend(
 
     return legend_repository.update_legend(session, legend)
 
-def delete_legend(session: Session, legend_id: UUID):
+def delete_legend(session: Session, legend_id: str):
     legend = legend_repository.get_legend_by_id(session, legend_id)
     if not legend:
         raise HTTPException(status_code=404, detail="Legend not found")
