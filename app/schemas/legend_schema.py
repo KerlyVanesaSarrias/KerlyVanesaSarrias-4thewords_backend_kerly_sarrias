@@ -74,7 +74,9 @@ class LegendBase(BaseModel):
     description: str
     legend_date: date
     category_id: str
-    location_id: str
+    province_id: str
+    canton_id: str
+    district_id: str
     image_url: Optional[str] = None
 
 class LegendCreate(LegendBase):

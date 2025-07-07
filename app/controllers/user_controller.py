@@ -4,9 +4,10 @@ from app.core.database import get_session
 from app.schemas.user_schema import UserCreate, UserResponse, UserLogin
 from app.services import user_service
 from app.core.security import create_access_token
-router = APIRouter(prefix="/auth", tags=["Auth"])
 from app.utils.auth_utils import get_current_user
 from app.models.user_model import User
+
+router = APIRouter(prefix="/auth", tags=["Auth"])
 
 @router.post("/register", response_model=UserResponse)
 def register(data: UserCreate, session: Session = Depends(get_session)):

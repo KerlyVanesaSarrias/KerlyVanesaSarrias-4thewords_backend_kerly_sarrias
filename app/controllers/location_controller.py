@@ -15,7 +15,7 @@ def list_provinces(
     ):
     return location_repository.get_all_provinces(session)
 
-@router.get("/provinces/{province_id}/cantons", response_model=list[CantonResponse])
+@router.get("/province/{province_id}/cantons", response_model=list[CantonResponse])
 def list_cantons_by_province(
     province_id: str, 
     session: Session = Depends(get_session),
@@ -65,11 +65,3 @@ def create_district(
 ):
     districtCreated = location_repository.create_district(session, district.name, district.canton_id)
     return districtCreated
-
-@router.get("/{location_id}", response_model=LocationResponse)
-def get_location(
-    location_id: str, 
-    session: Session = Depends(get_session),
-    current_user: User = Depends(get_current_user)
-):
-    return location_repository.get_location_by_id(session, location_id)

@@ -14,7 +14,6 @@ def init_db():
         province_model,
         canton_model,
         district_model,
-        location_model,
         legend_model
     )
     SQLModel.metadata.create_all(engine)

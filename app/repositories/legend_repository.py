@@ -2,8 +2,9 @@ from typing import Optional
 from sqlalchemy import String, cast
 from sqlmodel import Session, select
 from app.models.legend_model import Legend
-from app.models.location_model import Location
 from sqlalchemy.orm import selectinload
+
+from app.models.province_model import Province
 
 def create_legend(session: Session, legend: Legend) -> Legend:
     session.add(legend)
@@ -36,21 +37,17 @@ def get_all_legends(session: Session,
     
     query = select(Legend).options(
             selectinload(Legend.category), # type: ignore
-            selectinload(Legend.location) # type: ignore
         )
 
     if name:
         query = query.where(cast(Legend.name, String).ilike(f"%{name}%"))
     if category_id:
         query = query.where(Legend.category_id == category_id)
-    if province_id or canton_id or district_id:
-        query = query.join(Location)
-
-        if province_id:
-            query = query.where(Location.province_id == province_id)
-        if canton_id:
-            query = query.where(Location.canton_id == canton_id)
-        if district_id:
-            query = query.where(Location.district_id == district_id)
+    if province_id:
+        query = query.where(Legend.province_id == province_id)
+    if canton_id:
+        query = query.where(Legend.canton_id == canton_id)
+    if district_id:
+        query = query.where(Legend.district_id == district_id)
 
     return session.exec(query).all()

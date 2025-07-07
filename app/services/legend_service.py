@@ -18,7 +18,9 @@ def create_legend(session: Session, data: LegendCreate) -> Legend:
         legend_date=data.legend_date,
         image_url=data.image_url,
         category_id=data.category_id,
-        location_id=data.location_id,
+        province_id=data.province_id,
+        canton_id=data.canton_id,
+        district_id=data.district_id
     )
     return legend_repository.create_legend(session, legend)
 

@@ -19,7 +19,9 @@ async def create_legend_endpoint(
     description: str = Form(...),
     legend_date: date = Form(...),
     category_id: str = Form(...),
-    location_id: str = Form(...),
+    province_id: str = Form(...),
+    canton_id: str = Form(...),
+    district_id: str = Form(...),
     image: UploadFile = File(...),
     session: Session = Depends(get_session),
     current_user: User = Depends(get_current_user)
@@ -35,7 +37,9 @@ async def create_legend_endpoint(
         "description": description,
         "legend_date": legend_date,
         "category_id": category_id,
-        "location_id": location_id,
+        "province_id": province_id,
+        "canton_id": canton_id,
+        "district_id": district_id,
         "image_url": image_url,
     }
 
